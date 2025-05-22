@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orbiting Planes with Dark Mode Sync</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+      font-family: sans-serif;
+    }
+
+    /* Background */
+    .background-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .background-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 110%;
+      height: 110%;
+      background-size: cover;
+      background-position: center;
+      animation: panBackground 20s ease-in-out infinite alternate;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
+
+    .background-image.active {
+      opacity: 1;
+    }
+
+    @keyframes panBackground {
+      0% { transform: scale(1.05) translateX(0); }
+      100% { transform: scale(1.05) translateX(-5%); }
+    }
+
+    /* Orbiting Scene */
+    .scene {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      animation: moveScene 30s infinite alternate ease-in-out;
+    }
+
+    .orbit {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      transform: translate(-50%, -50%);
+      animation: scaleOrbit 10s infinite alternate ease-in-out;
+    }
+
+    .card-wrapper {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: rotateCard 20s linear infinite;
+    }
+
+    .card {
+      position: absolute;
+      width: 220px;
+      height: 100px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease, background 0.5s ease, box-shadow 0.5s ease;
+      overflow: hidden;
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 16px;
+      filter: brightness(1);
+      transition: filter 0.5s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.08);
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.25);
+    }
+
+    /* DARK MODE for cards */
+    .dark-mode .card {
+      background: #1a1a1a;
+      box-shadow: 0 10px 20px rgba(255, 255, 255, 0.05);
+    }
+
+    .dark-mode .card img {
+      filter: brightness(0.7);
+    }
+
+    /* Card positions around circle */
+    .card:nth-child(1) { transform: rotate(0deg) translate(300px) rotate(0deg); }
+    .card:nth-child(2) { transform: rotate(72deg) translate(300px) rotate(-72deg); }
+    .card:nth-child(3) { transform: rotate(144deg) translate(300px) rotate(-144deg); }
+    .card:nth-child(4) { transform: rotate(216deg) translate(300px) rotate(-216deg); }
+    .card:nth-child(5) { transform: rotate(288deg) translate(300px) rotate(-288deg); }
+
+    /* Animations */
+    @keyframes rotateCard {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @keyframes scaleOrbit {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.3); }
+    }
+
+    @keyframes moveScene {
+      0%   { transform: translate(0, 0); }
+      25%  { transform: translate(10vw, 5vh); }
+      50%  { transform: translate(-5vw, -10vh); }
+      75%  { transform: translate(15vw, 10vh); }
+      100% { transform: translate(-10vw, 5vh); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Images -->
+  <div class="background-container">
+    <div id="bg1" class="background-image active" style="background-image: url('light.jpg');"></div>
+    <div id="bg2" class="background-image" style="background-image: url('dark.jpg');"></div>
+  </div>
+
+  <!-- Scene & Cards -->
+  <div id="main-scene" class="scene">
+    <div class="orbit">
+      <div class="card-wrapper">
+        <div class="card"><img src="Plane1.png" alt="Plane 1"></div>
+        <div class="card"><img src="Plane2.png" alt="Plane 2"></div>
+        <div class="card"><img src="Plane3.png" alt="Plane 3"></div>
+        <div class="card"><img src="Plane4.png" alt="Plane 4"></div>
+        <div class="card"><img src="Plane5.png" alt="Plane 5"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background + Dark Mode Toggle Script -->
+  <script>
+    const bg1 = document.getElementById('bg1');
+    const bg2 = document.getElementById('bg2');
+    const mainScene = document.getElementById('main-scene');
+
+    let showingLight = true;
+
+    setInterval(() => {
+      if (showingLight) {
+        bg1.classList.remove('active');
+        bg2.classList.add('active');
+        mainScene.classList.add('dark-mode');
+      } else {
+        bg1.classList.add('active');
+        bg2.classList.remove('active');
+        mainScene.classList.remove('dark-mode');
+      }
+      showingLight = !showingLight;
+    }, 6000); // Every 6 seconds switch
+  </script>
+</body>
+</html>
